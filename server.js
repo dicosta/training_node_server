@@ -41,6 +41,7 @@ app.use('/api/', userRoutes);
 app.use('/api/', listingsRoutes); 
 app.use('/images', express.static(uploads_config.uploads_dir))
 
+// invalid route handler
 app.use(function(req, res, next) {
   res.status(404).json({
     message: "No such route exists"
@@ -50,7 +51,7 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500).json({
-    message: "Error Message"
+    message: err.message
   })
 });
 

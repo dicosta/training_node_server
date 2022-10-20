@@ -5,17 +5,17 @@ verifyToken = (req, res, next) => {
   let token = req.session.token;
 
   if (!token) {
-    return res.status(403).send({
-      message: "No token provided!",
-    });
+    token = req.headers['x-access-token']
+  }
+
+  if (!token) {
+    throw ApiError("no token provided", 401);
   }
 
   
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
-      return res.status(401).send({
-        message: "Unauthorized!",
-      });
+      throw ApiError("unauthorized", 401);
     }
     
     req.userId = decoded.id;

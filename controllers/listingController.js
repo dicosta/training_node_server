@@ -1,8 +1,8 @@
+require('../util/error.js')()
 const Joi = require('joi');
 const listingModel = require('../models/listingModel')
 const multer = require('multer');
 const uploads_config = require("../config/uploads.config");
-
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -15,7 +15,7 @@ var storage = multer.diskStorage({
 })
 //create multer instance
 var upload = multer({ storage: storage })
-//add image mime/type filter
+//TODO: add image mime/type filter
 
 
 const newListingSchema = Joi.object({    
@@ -25,26 +25,19 @@ const newListingSchema = Joi.object({
 });
 
 const getListingById = (req, res, next) => {    
-    try {
-        let listing = listingModel.getListingById(req.params.listingId)
-        
-        return res.status(200).json(
-            listing
-        )
-    } catch(err) {
-        return res.status(400).json({
-            status: 'error',
-            message: 'error fetching listing'
-        })
+    let listing = listingModel.getListingById(req.params.listingId)
+
+    if (!listing) {
+        throw ApiError("Listing not found", 404);
     }
+
+    return res.status(200).json(listing)
 };
 
 const getAllListings = (req, res, next) => {        
     let allListings = listingModel.getAllListings()
     
-    return res.status(200).json(
-        allListings
-    )    
+    return res.status(200).json(allListings)    
 };
 
 const createListing = (req, res, next) => {   
@@ -52,19 +45,13 @@ const createListing = (req, res, next) => {
     
     if (validation.error) {
         //json does not meet schema requirements
-        return res.status(400).json({
-            status: 'error',
-            message: 'Invalid request data'
-        })
+        throw ApiError("Invalid Data", 400);
     } else {
         try {
             var newListing = listingModel.createListing(req.body, req.userId)
             return res.status(201).json(newListing)
         } catch(err) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'error creating listing'
-            })
+            throw ApiError("Internal Server Error", 500);
         }        
     }     
 };
@@ -76,62 +63,39 @@ const publishListing = (req, res, next) => {
             var updatedListing = listingModel.publishListing(req.params.listingId)
             return res.status(201).json(updatedListing)
         } else {
-            return res.status(404).json({
-                status: 'error',
-                message: 'no such listing'
-            })
+            throw ApiError("Forbidden!", 403);
         }
     } catch(err) {
-        console.log(err)
-
-        return res.status(500).json({
-            status: 'error',
-            message: 'error updating listing'
-        })
+        throw ApiError("Internal Server Error", 500);
     }           
 };
 
 const addListingImage = (req, res, next) => {    
-    //check if it is my listing
     try {
         if (listingModel.isListingFromUser(req.params.listingId, req.userId)) {
             
             upload.array('listingimage', 12)(req, res, function(err) {
                 if (err instanceof multer.MulterError) {
-                    return res.status(400).json({
-                        status: 'error',
-                        message: err
-                    })
+                    throw ApiError("Internal Server Error", 500);
                 } else if (err) {
-                    return res.status(400).json({
-                        status: 'error',
-                        message: err
-                    })
+                    throw ApiError("Internal Server Error", 500);
                 }
 
-                
+                var images = []
+
                 req.files.forEach(function(imageFile) {
-                    listingModel.addListingImage(req.params.listingId, imageFile.filename)
+                    if (listingModel.addListingImage(req.params.listingId, imageFile.filename)) {
+                        images.push("/images/" + imageFile.filename)
+                    }
                 });
                 
-                return res.status(201).json({
-                    status: 'ok',
-                    message: 'files uploaded'
-                })
+                return res.status(201).json({images})
             })
         } else {
-            return res.status(404).json({
-                status: 'error',
-                message: 'no such listing'
-            })
+            throw ApiError("Forbidden!", 403);
         }
     } catch(err) {
-        console.log(err)
-
-        return res.status(500).json({
-            status: 'error',
-            message: 'error updating listing'
-        })
+        throw ApiError("Internal Server Error", 500);
     }
 };
 

@@ -1,11 +1,8 @@
 const db = require('../services/db'); 
 const bcrypt = require("bcryptjs");
 
-function isEmailTaken(email) {
-    
+function isEmailTaken(email) {   
     const data = db.query(`SELECT * FROM user WHERE email = ?`, email)
-
-    
     return data && data.length > 0
 }
 
@@ -13,14 +10,14 @@ function createUser(userObject) {
     const {firstname, lastname, email} = userObject
     const password = bcrypt.hashSync(userObject.password, 8)
 
-    const result = db.run(`INSERT INTO user (firstname, lastname, email, password) 
-        VALUES (@firstname, @lastname, @email, @password)`, {firstname, lastname, email, password})
+    const result = db.get(`INSERT INTO user (firstname, lastname, email, password) 
+        VALUES (@firstname, @lastname, @email, @password) RETURNING id, firstname, lastname, email`, {firstname, lastname, email, password})
     
-    if (result.changes) {
-        return true
+    if (!result) {
+        throw "Error Inserting User"
     }
-
-    return false;
+    
+    return result
 }
 
 function fetchUser(signInObject) {

@@ -41,7 +41,7 @@ function getListingById(listing_id) {
         {listing_id})
 
     if (!listing) {
-        throw "Error Fetching Listing"
+        return null
     }
 
     listing['images'] = listingImages
