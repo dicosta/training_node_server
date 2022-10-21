@@ -45,7 +45,11 @@ Provided Features
   ```
   
   
+# Setup:
 
+- Clone this repository
+- run `npm install` to fetch dependencies
+- run `server.js` (i.e. npx nodemon server.js)
 
 
 

@@ -11,6 +11,8 @@ const listingsRoutes = require('./routes/listingRoutes.js')
 
 const app = express();
 
+database.initDataBase();
+
 app.use(morgan('tiny'));
 
 app.use(cors())
@@ -55,7 +57,6 @@ app.use(function(err, req, res, next) {
   })
 });
 
-database.initDataBase()
 
 const listener = app.listen(process.env.PORT || 3000, () => {
     console.log('App is listening on port ' + listener.address().port)

@@ -1,22 +1,8 @@
 require('../util/error.js')()
 const Joi = require('joi');
-const listingModel = require('../models/listingModel')
 const multer = require('multer');
-const uploads_config = require("../config/uploads.config");
-
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploads_config.uploads_dir)
-    },
-    filename: function (req, file, cb) {
-        var ext = file.originalname.split('.')[file.originalname.split('.').length -1];
-        cb(null, file.fieldname + '_' + req.userId + '_' + Date.now() + '.' + ext)
-    }
-})
-//create multer instance
-var upload = multer({ storage: storage })
-//TODO: add image mime/type filter
-
+const listingModel = require('../models/listingModel')
+const fileUploader = require('../util/fileupload')
 
 const newListingSchema = Joi.object({    
     title: Joi.string().required(),
@@ -73,23 +59,22 @@ const publishListing = (req, res, next) => {
 const addListingImage = (req, res, next) => {    
     try {
         if (listingModel.isListingFromUser(req.params.listingId, req.userId)) {
-            
-            upload.array('listingimage', 12)(req, res, function(err) {
+            fileUploader.upload.single('listingimage')(req, res, function(err) {                
                 if (err instanceof multer.MulterError) {
-                    throw ApiError("Internal Server Error", 500);
+                    next(err)
                 } else if (err) {
-                    throw ApiError("Internal Server Error", 500);
-                }
+                    next(err)
+                } else {
+                    var image = {}
 
-                var images = []
-
-                req.files.forEach(function(imageFile) {
-                    if (listingModel.addListingImage(req.params.listingId, imageFile.filename)) {
-                        images.push("/images/" + imageFile.filename)
+                    if (listingModel.addListingImage(req.params.listingId, req.file.filename)) {
+                        image["url"] =  "/images/" + req.file.filename
+                        return res.status(201).json(image)
+                    } else {
+                        throw ApiError("Internal Server Error", 500)
                     }
-                });
-                
-                return res.status(201).json({images})
+                    
+                }
             })
         } else {
             throw ApiError("Forbidden!", 403);

@@ -9,7 +9,7 @@ function init_uploads_dir() {
         
     fs.mkdir(destfolder, (err) => {
         if (err.code = 'EEXIST') {
-            console.log(destfolder + ' already exist')
+            //console.log(destfolder + ' already exist')
         }        
     });  
     
