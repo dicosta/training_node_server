@@ -47,7 +47,7 @@ const publishListing = (req, res, next) => {
         if (listingModel.isListingFromUser(req.params.listingId, req.userId)) {
 
             var updatedListing = listingModel.publishListing(req.params.listingId)
-            return res.status(201).json(updatedListing)
+            return res.status(200).json(updatedListing)
         } else {
             throw ApiError("Forbidden!", 403);
         }

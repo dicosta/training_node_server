@@ -107,7 +107,7 @@ const signIn = (req, res, next) => {
 const signOut = (req, res, next) => {
     //keep a list of invalidated tokens to check after token validation?
     //(also maybe clear the list when the secret is rotated)
-    res.json({message: "sign out"})
+    res.status(200).send()
 }
 
 module.exports = {newUser, getUser, signIn, signOut};
