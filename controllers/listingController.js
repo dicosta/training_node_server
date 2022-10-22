@@ -11,13 +11,17 @@ const newListingSchema = Joi.object({
 });
 
 const getListingById = (req, res, next) => {    
-    let listing = listingModel.getListingById(req.params.listingId)
+    try {
+        let listing = listingModel.getListingById(req.params.listingId)
 
-    if (!listing) {
-        throw ApiError("Listing not found", 404);
-    }
+        if (!listing) {
+            throw ApiError("Listing not found", 404);
+        }
 
-    return res.status(200).json(listing)
+        return res.status(200).json(listing)
+    } catch(err) {
+        throw ApiError("Internal Server Error", 500);
+    }       
 };
 
 const getAllListings = (req, res, next) => {        
@@ -45,7 +49,6 @@ const createListing = (req, res, next) => {
 const publishListing = (req, res, next) => {    
     try {
         if (listingModel.isListingFromUser(req.params.listingId, req.userId)) {
-
             var updatedListing = listingModel.publishListing(req.params.listingId)
             return res.status(200).json(updatedListing)
         } else {

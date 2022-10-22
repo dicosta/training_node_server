@@ -150,7 +150,8 @@ Provided Features
         "available_since": null,
         "available_to": null,
         "lat": null,
-        "lon": null
+        "lon": null,
+        "images": []
     },
     {
         "id": 2,
@@ -161,7 +162,8 @@ Provided Features
         "available_since": null,
         "available_to": null,
         "lat": null,
-        "lon": null
+        "lon": null,
+        "images": []
     },
     {
         "id": 9,
@@ -172,7 +174,8 @@ Provided Features
         "available_since": null,
         "available_to": null,
         "lat": null,
-        "lon": null
+        "lon": null,
+        "images": []
     }
   ]
   ```
@@ -259,7 +262,14 @@ Provided Features
     "price_cents": 10000,
     "created_at": "2022-10-18T18:19:12.816Z",
     "state": "published",
-    "user_id": 1
+    "user_id": 1,
+    "images": [
+    {
+        "file_name": "listingimage_1_1666407745508.jpg"
+    },
+    {
+        "file_name": "listingimage_1_1666409125261.jpg"
+    }]
   }
   
   Status 403:
@@ -309,19 +319,7 @@ Provided Features
   Responses
   ```
   Status 200:
-
-  {
-    "id": 1,
-    "title": "titulo 1",
-    "description": "description 1",
-    "created_at": "2022-10-22T02:40:45.203Z",
-    "price_cents": 10000,
-    "available_since": null,
-    "available_to": null,
-    "lat": null,
-    "lon": null,
-    "images": []
-  }
+  [The Requested Image]
 
   STATUS 404:
   {
