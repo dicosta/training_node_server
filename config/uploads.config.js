@@ -8,9 +8,13 @@ function init_uploads_dir() {
     var destfolder = path.join(__dirname, '../uploads/')    
         
     fs.mkdir(destfolder, (err) => {
-        if (err.code = 'EEXIST') {
-            //console.log(destfolder + ' already exist')
-        }        
+        if (err) {
+            if (err.code == 'EEXIST') {
+                //if folder already exists ignore error
+            } else {
+                console.log(err)
+            }
+        }   
     });  
     
     return destfolder
