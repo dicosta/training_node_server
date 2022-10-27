@@ -11,17 +11,23 @@ const newListingSchema = Joi.object({
 });
 
 const getListingById = (req, res, next) => {    
-    try {
-        let listing = listingModel.getListingById(req.params.listingId)
+    let listing = listingModel.getListingById(req.params.listingId)    
 
-        if (!listing) {
-            throw ApiError("Listing not found", 404);
-        }
+    if (!listing) {
+        throw ApiError("Listing not found", 404);
+    }
 
+    
+
+    if (listing.state == 'published') {
+        delete listing.state
         return res.status(200).json(listing)
-    } catch(err) {
-        throw ApiError("Internal Server Error", 500);
-    }       
+    } else if (listingModel.isListingFromUser(req.params.listingId, req.userId)) {
+        delete listing.state
+        return res.status(200).json(listing)
+    } else {
+        throw ApiError("Forbidden!", 403); //maybe giving to much information and should return 404 instead?
+    }
 };
 
 const getAllListings = (req, res, next) => {        

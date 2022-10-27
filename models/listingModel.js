@@ -40,7 +40,7 @@ function getAllListings() {
 }
 
 function getListingById(listing_id) {
-    const listing = db.get(`SELECT id, title, description, created_at, price_cents, available_since, available_to, lat, lon FROM listing WHERE id = @listing_id`, 
+    const listing = db.get(`SELECT id, title, description, created_at, price_cents, available_since, available_to, lat, lon, state FROM listing WHERE id = @listing_id`, 
         {listing_id})
 
     if (!listing) {
