@@ -1,3 +1,4 @@
+const fs          = require('fs');
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
@@ -38,6 +39,11 @@ app.use(function(req, res, next) {
     next();
   });
 
+//Serve the WS Test page in the Root  
+app.get('/', function(req, res) {
+    fs.createReadStream('./index.html').pipe(res);
+});
+
 //routes
 app.use('/api/', userRoutes); 
 app.use('/api/', listingsRoutes); 
@@ -58,6 +64,9 @@ app.use(function(err, req, res, next) {
 });
 
 
-const listener = app.listen(process.env.PORT || 3000, () => {
-    console.log('App is listening on port ' + listener.address().port)
-})
+//for HTTP server only
+//const listener = app.listen(process.env.PORT || 3000, () => {
+//    console.log('App is listening on port ' + listener.address().port)
+//})
+
+module.exports = app

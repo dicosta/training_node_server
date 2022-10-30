@@ -1,0 +1,39 @@
+<html>
+<head>
+  <title>Training Node Server: WS Test</title>
+</head>
+
+<body>
+  <h2>Socket message response: </h2>
+  <pre id="response"></pre>
+  <hr/>
+  <h2>Listing ID</h2>
+  <input id="listing_id">
+  <br>
+  <h2>Websocket</h2>
+  <button onClick="suscribeListing()">SUSCRIBE TO LISTING</button>
+  <button onClick="unsuscribeListing()">UNSUSCRIBE FROM LISTING</button>
+  <script>
+
+    var socket;
+
+    document.body.onload = function() {
+        socket = new WebSocket('ws://localhost:3000/');
+
+        socket.onmessage = function(message) {
+          console.log('Socket server message', message);
+          let data = JSON.parse(message.data);
+          document.getElementById('response').innerHTML = JSON.stringify(data, null, 2);
+        };
+    }
+
+    function suscribeListing() {      
+      socket.send(JSON.stringify({'action': 'SUSCRIBE', listing_id: document.getElementById("listing_id").value}));
+    }
+
+    function unsuscribeListing() {      
+      socket.send(JSON.stringify({'action': 'UNSUSCRIBE', listing_id: document.getElementById("listing_id").value}));
+    }
+  </script>
+</body>
+</html>

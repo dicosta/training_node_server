@@ -17,8 +17,6 @@ const getListingById = (req, res, next) => {
         throw ApiError("Listing not found", 404);
     }
 
-    
-
     if (listing.state == 'published') {
         delete listing.state
         return res.status(200).json(listing)

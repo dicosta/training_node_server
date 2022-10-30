@@ -1,4 +1,7 @@
+const EventEmitter = require('events').EventEmitter;
 const db = require('../services/db'); 
+
+var eventBus = new EventEmitter();
 
 function createListing(listingObject, user_id) {
     const {title, description, price_cents} = listingObject
@@ -25,6 +28,8 @@ function publishListing(listing_id) {
         throw "Error Updating Listing"
     } else {
         listing['images'] = fetchListingImages(listing_id)
+
+        eventBus.emit('listing-changed', listing)
         return listing
     }
 }
@@ -56,6 +61,8 @@ function addListingImage(listing_id, file_name) {
         VALUES (@listing_id, @file_name)`, {listing_id, file_name})
     
     if (result.changes) {
+        eventBus.emit('listing-changed', getListingById(listing_id))
+
         return true
     }
 
@@ -73,5 +80,5 @@ function fetchListingImages(listing_id) {
 }
 
 module.exports = {
-    createListing, getAllListings, publishListing, getListingById, addListingImage, isListingFromUser
+    createListing, getAllListings, publishListing, getListingById, addListingImage, isListingFromUser, eventBus
 }

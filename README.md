@@ -9,6 +9,7 @@ Provided Features
 - Account Management 
 - multi-part/form-data Image upload
 - SQLite storage for persistence
+- WebSocket Support for Listening changes in Listings through a suscription 
 - Pagination (TODO)
 - Sort & Filter (TODO)
 - Push Notification (TODO)
@@ -17,7 +18,29 @@ Provided Features
 
 - Clone this repository
 - run `npm install` to fetch dependencies
-- run `server.js` (i.e. npx nodemon server.js)
+- run `ws-server.js` (i.e. npx nodemon ws-server.js)
+
+# Web-Sockets Test Page
+
+Available on **/wstest.html**
+
+# WebSocket Support
+
+The server listens to connections on the same port as the API (defaults to 3000, i.e.: **ws://localhost:3000/**)
+Once connected, the ws server expects json messages with this protocol:
+
+```
+{
+  "action": "desired_action",
+  "listing_id": "the id of the listing to monitor/unmonitor"
+}
+```
+
+where action can be **SUSCRIBE** OR **UNSUSCRIBE**
+
+Suscribed clients will receive the Listing object through the web socket each time
+that the suscribed listing changes in the server, until the client either unsuscribes or
+closes the connection
 
 # Summary of Endpoints:
 
