@@ -163,44 +163,47 @@ closes the connection
   ```
   Status 200:
 
-  [
-    {
-        "id": 1,
-        "title": "titulo 1",
-        "description": "description 1",
-        "created_at": "2022-10-18T18:19:07.737Z",
-        "price_cents": 10000,
-        "available_since": null,
-        "available_to": null,
-        "lat": null,
-        "lon": null,
-        "images": []
-    },
-    {
-        "id": 2,
-        "title": "titulo 1",
-        "description": "description 1",
-        "created_at": "2022-10-18T18:19:08.547Z",
-        "price_cents": 10000,
-        "available_since": null,
-        "available_to": null,
-        "lat": null,
-        "lon": null,
-        "images": []
-    },
-    {
-        "id": 9,
-        "title": "titulo 1",
-        "description": "description 1",
-        "created_at": "2022-10-18T18:19:12.816Z",
-        "price_cents": 10000,
-        "available_since": null,
-        "available_to": null,
-        "lat": null,
-        "lon": null,
-        "images": []
-    }
-  ]
+  {
+    "items": 
+      [
+        {
+            "id": 1,
+            "title": "titulo 1",
+            "description": "description 1",
+            "created_at": "2022-10-18T18:19:07.737Z",
+            "price_cents": 10000,
+            "available_since": null,
+            "available_to": null,
+            "lat": null,
+            "lon": null,
+            "images": []
+        },
+        {
+            "id": 2,
+            "title": "titulo 1",
+            "description": "description 1",
+            "created_at": "2022-10-18T18:19:08.547Z",
+            "price_cents": 10000,
+            "available_since": null,
+            "available_to": null,
+            "lat": null,
+            "lon": null,
+            "images": []
+        },
+        {
+            "id": 9,
+            "title": "titulo 1",
+            "description": "description 1",
+            "created_at": "2022-10-18T18:19:12.816Z",
+            "price_cents": 10000,
+            "available_since": null,
+            "available_to": null,
+            "lat": null,
+            "lon": null,
+            "images": []
+        }
+      ]
+  }
   ```
 
 - [GET] **/api/listings/:listing_id**

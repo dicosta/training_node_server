@@ -1,8 +1,9 @@
 require('../util/error.js')()
+const listUtil = require('../util/wrapListInObject')
 const Joi = require('joi');
 const multer = require('multer');
 const listingModel = require('../models/listingModel')
-const fileUploader = require('../util/fileupload')
+const fileUploader = require('../util/fileupload');
 
 const newListingSchema = Joi.object({    
     title: Joi.string().required(),
@@ -31,7 +32,7 @@ const getListingById = (req, res, next) => {
 const getAllListings = (req, res, next) => {        
     let allListings = listingModel.getAllListings()
     
-    return res.status(200).json(allListings)    
+    return res.status(200).json(listUtil.wrapInObject(allListings))  
 };
 
 const createListing = (req, res, next) => {   
