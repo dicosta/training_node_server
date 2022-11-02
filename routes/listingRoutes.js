@@ -11,5 +11,6 @@ router.post('/listings', [authJwt.verifyToken], listingController.createListing)
 router.post('/listings/:listingId/images', [authJwt.verifyToken], listingController.addListingImage);
 
 router.put('/listings/:listingId/publish', [authJwt.verifyToken], listingController.publishListing);
+router.put('/listings/:listingId', [authJwt.verifyToken], listingController.updateListing);
 
 module.exports = router; 

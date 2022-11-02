@@ -304,6 +304,50 @@ closes the connection
   }
   ```
 
+  - [PUT] **/api/listings/:listing_id**
+
+  **[Authenticated]**
+  Header
+  x-access-token = [your-token]
+
+  Purpose: updates the title, description or price of a listing the current user owns
+  
+  Sample Payload (title, description and price_cents are mandatory):
+  ```
+  {
+    "title":"new title",
+    "description":"new description",
+    "price_cents": 15000
+  }
+  ```
+
+  Responses
+  ```
+  Status 200:
+
+  {
+    "id": 1,
+    "title": "new title",
+    "description": "new description",
+    "price_cents": 15000,
+    "created_at": "2022-10-18T18:19:12.816Z",
+    "state": "published",
+    "user_id": 1,
+    "images": [
+    {
+        "file_name": "listingimage_1_1666407745508.jpg"
+    },
+    {
+        "file_name": "listingimage_1_1666409125261.jpg"
+    }]
+  }
+  
+  Status 403:
+  {
+    "message": "Forbidden!"
+  }
+  ```
+
 - [POST] **/api/listings/:listing_id/images**
 
   **[Authenticated]**

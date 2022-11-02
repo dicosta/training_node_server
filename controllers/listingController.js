@@ -51,6 +51,26 @@ const createListing = (req, res, next) => {
     }     
 };
 
+const updateListing = (req, res, next) => {    
+    const validation = newListingSchema.validate(req.body);
+
+    if (validation.error) {
+        //json does not meet schema requirements
+        throw ApiError("Invalid Data", 400);
+    } else {
+        try {            
+            if (listingModel.isListingFromUser(req.params.listingId, req.userId)) {                
+                var updatedListing = listingModel.updateListing(req.params.listingId, req.body)
+                return res.status(200).json(updatedListing)
+            } else {
+                throw ApiError("Forbidden!", 403);
+            }
+        } catch(err) {
+            throw ApiError("Internal Server Error", 500);
+        }   
+    }
+}
+
 const publishListing = (req, res, next) => {    
     try {
         if (listingModel.isListingFromUser(req.params.listingId, req.userId)) {
@@ -92,4 +112,4 @@ const addListingImage = (req, res, next) => {
     }
 };
 
-module.exports = {getListingById, getAllListings, createListing, publishListing, addListingImage};
+module.exports = {getListingById, getAllListings, createListing, publishListing, addListingImage, updateListing};
