@@ -10,7 +10,7 @@ Provided Features
 - multi-part/form-data Image upload
 - SQLite storage for persistence
 - WebSocket Support for Listening changes in Listings through a suscription 
-- Pagination (TODO)
+- Pagination
 - Sort & Filter (TODO)
 - Push Notification (TODO)
 
@@ -151,13 +151,13 @@ closes the connection
   Status 200:
   ```
   
-- [GET] **/api/listings**
+- [GET] **/api/listings/all**
 
   **[Authenticated]**
   Header
   x-access-token = [your-token]
 
-  Purpose: Returns all the listings that have the state "published"
+  Purpose: Returns all the listings that have the state "published" sorted by created_at ASC
   
   Responses
   ```
@@ -203,6 +203,60 @@ closes the connection
             "images": []
         }
       ]
+  }
+  ```
+
+  - [GET] **/api/listings?page_size=SIZE&page_number=NUM**
+
+  **[Authenticated]**
+  Header
+  x-access-token = [your-token]
+
+  Purpose: Returns the NUMth page of SIZE listings sorted by created_at ASC.
+  SIZE defaults to 10 when not provided
+  NUM defaults to 0 when not provided
+  The page_number is zero-based. 
+  
+  Responses
+  ```
+  Status 200:
+
+  {
+    "page_number": 0,
+    "page_size": 2,
+    "total": 5,
+    "listings": [
+        {
+            "id": 1,
+            "title": "un titulo mas largo.  4",
+            "description": "una descripcion mas larga 1234",
+            "created_at": "2022-10-27T03:47:26.095Z",
+            "price_cents": 15000,
+            "available_since": null,
+            "available_to": null,
+            "lat": null,
+            "lon": null,
+            "state": "published",
+            "images": [
+                {
+                    "file_name": "listingimage_1_1667519578050.jpg"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "title": "titulo 1",
+            "description": "description 1",
+            "created_at": "2022-10-27T03:47:26.924Z",
+            "price_cents": 10000,
+            "available_since": null,
+            "available_to": null,
+            "lat": null,
+            "lon": null,
+            "state": "published",
+            "images": []
+        }
+    ]
   }
   ```
 

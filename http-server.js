@@ -1,5 +1,6 @@
 const fs          = require('fs');
 const express = require("express");
+const { queryParser } = require('express-query-parser')
 const cors = require("cors");
 const cookieSession = require("cookie-session");
 const morgan = require("morgan")
@@ -21,6 +22,15 @@ app.use(cors())
 app.use(express.json());
 //parse application/x-www-form-urlencoded content
 app.use(express.urlencoded({ extended: true }));
+//parse query strings
+app.use(
+  queryParser({
+    parseNull: true,
+    parseUndefined: true,
+    parseBoolean: true,
+    parseNumber: true
+  })
+)
 
 app.use(
     cookieSession({

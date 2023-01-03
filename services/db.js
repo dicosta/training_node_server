@@ -20,6 +20,10 @@ function get(sql, params) {
   return db.prepare(sql).get(params);
 }
 
+function total(sql) {
+  return db.prepare(sql).get().count
+}
+
 module.exports = {
-  query, queryAll, run, get
+  query, queryAll, run, get, total
 }

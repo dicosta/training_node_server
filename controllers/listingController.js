@@ -35,6 +35,16 @@ const getAllListings = (req, res, next) => {
     return res.status(200).json(listUtil.wrapInObject(allListings))  
 };
 
+const getListingPage = (req, res, next) => {
+    const page_number = req.query['page_number'] ? req.query['page_number'] : 0
+    const page_size = req.query['page_size'] ? req.query['page_size'] : 10
+    
+
+    let listingsPage = listingModel.getListingPage(page_number, page_size)
+
+    return res.status(200).json(listingsPage)
+};
+
 const createListing = (req, res, next) => {   
     const validation = newListingSchema.validate(req.body);
     
@@ -112,4 +122,4 @@ const addListingImage = (req, res, next) => {
     }
 };
 
-module.exports = {getListingById, getAllListings, createListing, publishListing, addListingImage, updateListing};
+module.exports = {getListingById, getAllListings, createListing, publishListing, addListingImage, updateListing, getListingPage};

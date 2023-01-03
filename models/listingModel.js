@@ -53,13 +53,41 @@ function publishListing(listing_id) {
 }
 
 function getAllListings() {
-    const data = db.queryAll(`SELECT id, title, description, created_at, price_cents, available_since, available_to, lat, lon FROM listing WHERE state = 'published'`)
+    const data = db.queryAll(`SELECT id, title, description, created_at, price_cents, available_since, available_to, lat, lon FROM listing WHERE state = 'published' ORDER BY created_at ASC`)
 
     data.forEach(function(listing){
         listing['images'] = fetchListingImages(listing.id)   
     })
 
     return data    
+}
+
+function getListingPage(page_number, page_size) {
+    const limit = page_number * page_size
+
+    const page_listings = db.query(`SELECT id, title, description, created_at, price_cents, available_since, available_to, lat, lon, state FROM listing
+        WHERE id NOT IN (SELECT id FROM listing WHERE state = 'published' ORDER BY created_at ASC LIMIT @limit) AND state = 'published'
+        ORDER BY created_at ASC LIMIT @page_size`, {limit, page_size})
+    
+    if (!page_listings) {
+        return null
+    }
+
+    page_listings.forEach(function(listing){
+        listing['images'] = fetchListingImages(listing.id)   
+    })
+
+    const total = db.total(`SELECT COUNT(*) count FROM listing WHERE state = 'published'`)
+
+    var listings_page = {
+        page_number: page_number,
+        page_size: page_size,
+        total : total,
+        listings : page_listings
+    
+    }
+
+    return listings_page
 }
 
 function getListingById(listing_id) {
@@ -98,5 +126,5 @@ function fetchListingImages(listing_id) {
 }
 
 module.exports = {
-    createListing, getAllListings, publishListing, getListingById, addListingImage, isListingFromUser, eventBus, updateListing
+    createListing, getAllListings, publishListing, getListingById, addListingImage, isListingFromUser, eventBus, updateListing, getListingPage
 }
