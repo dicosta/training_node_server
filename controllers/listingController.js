@@ -9,6 +9,7 @@ const newListingSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),
     price_cents: Joi.number().integer(8).required()
+    //TODO: available_to should be bigger than available_from. If one is present, then the other need to be present to
 });
 
 const getListingById = (req, res, next) => {    
@@ -36,13 +37,45 @@ const getAllListings = (req, res, next) => {
 };
 
 const getListingPage = (req, res, next) => {
+    //setup defaults
     const page_number = req.query['page_number'] ? req.query['page_number'] : 0
     const page_size = req.query['page_size'] ? req.query['page_size'] : 10
+    const sort_by = req.query['sort_by'] ? req.query['sort_by'] : 'created_at'
+    const sort_dir = req.query['sort_dir'] ? req.query['sort_dir'] : 'ASC'
     
+    const filter_title = req.query['title']
+    const filter_description = req.query['description']
+    const filter_price_cents_from = req.query['price_cents_from']
+    const filter_price_cents_to = req.query['price_cents_to']
+    const filter_available_from = req.query['available_from']
+    const filter_available_to = req.query['available_to']
+    
+    //validate params
+    paging_params_ok = Number.isInteger(page_number) && Number.isInteger(page_size)
+    sort_params_ok = ['ASC', 'DESC'].includes(sort_dir.toUpperCase()) && 
+        ['CREATED_AT', 'TITLE', 'DESCRIPTION', 'PRICE_CENTS'].includes(sort_by.toUpperCase())
+    filter_params_ok = (!filter_price_cents_from || Number.isInteger(filter_price_cents_from)) &&
+        (!filter_price_cents_to || Number.isInteger(filter_price_cents_to))
 
-    let listingsPage = listingModel.getListingPage(page_number, page_size)
+    if (sort_params_ok && paging_params_ok && filter_params_ok) {
+        params = {
+            'sort_by': sort_by,
+            'sort_dir': sort_dir,
+            'page_number': page_number,
+            'page_size': page_size,
+            'filter_title': filter_title,
+            'filter_description': filter_description,
+            'filter_price_cents_from': filter_price_cents_from,
+            'filter_price_cents_to': filter_price_cents_to,
+            'filter_available_from': filter_available_from,
+            'filter_available_to': filter_available_to
+        }
 
-    return res.status(200).json(listingsPage)
+        let listingsPage = listingModel.getListingPage(params)
+        return res.status(200).json(listingsPage)
+    } else {
+        throw ApiError("Invalid Params", 400);
+    }
 };
 
 const createListing = (req, res, next) => {   

@@ -11,7 +11,7 @@ Provided Features
 - SQLite storage for persistence
 - WebSocket Support for Listening changes in Listings through a suscription 
 - Pagination
-- Sort & Filter (TODO)
+- Sort & Filter
 - Push Notification (TODO)
 
 # Setup:
@@ -216,6 +216,19 @@ closes the connection
   SIZE defaults to 10 when not provided
   NUM defaults to 0 when not provided
   The page_number is zero-based. 
+
+  It also support additional query parameters for sorting and filtering
+  Sorting:
+    - sort_by (supported values: created_at, title, description, price_cents)
+    - sort_dir (supported values: asc, desc)
+  
+  Filtering:
+    - filter_title (uses a 'like' query checking the value against title column)
+    - filter description (uses a 'like' query checking the value against description column)
+    - filter_price_cents_from & filter_price_cents_to (can define a min and/or max value to filter
+      by price_cents)
+    - filter_available_from & filter_available_to (can define two dates to look for listings 
+      available in a specific time window)
   
   Responses
   ```

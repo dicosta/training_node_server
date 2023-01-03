@@ -1,5 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
 const db = require('../services/db'); 
+const filterUtil = require('../util/queryFilterHelper')
 
 var eventBus = new EventEmitter();
 
@@ -62,12 +63,29 @@ function getAllListings() {
     return data    
 }
 
-function getListingPage(page_number, page_size) {
-    const limit = page_number * page_size
+function getListingPage(params) {
+    params['limit'] = params.page_number * params.page_size
 
-    const page_listings = db.query(`SELECT id, title, description, created_at, price_cents, available_since, available_to, lat, lon, state FROM listing
-        WHERE id NOT IN (SELECT id FROM listing WHERE state = 'published' ORDER BY created_at ASC LIMIT @limit) AND state = 'published'
-        ORDER BY created_at ASC LIMIT @page_size`, {limit, page_size})
+    const extra_where_clause = filterUtil.buildFilterWhereClause(params)
+    const sql = `SELECT id, 
+                        title, 
+                        description, 
+                        created_at, 
+                        price_cents, 
+                        available_since, 
+                        available_to, 
+                        lat, 
+                        lon, 
+                        state 
+                    FROM 
+                        listing
+                    WHERE 
+                        id NOT IN (SELECT id FROM listing WHERE state = 'published' ${extra_where_clause} ORDER BY ${params.sort_by} ${params.sort_dir} LIMIT @limit) 
+                    AND 
+                        state = 'published' ${extra_where_clause}
+                    ORDER BY ${params.sort_by} ${params.sort_dir} LIMIT @page_size`
+
+    const page_listings = db.query(sql, params)
     
     if (!page_listings) {
         return null
@@ -77,14 +95,13 @@ function getListingPage(page_number, page_size) {
         listing['images'] = fetchListingImages(listing.id)   
     })
 
-    const total = db.total(`SELECT COUNT(*) count FROM listing WHERE state = 'published'`)
+    const total = db.total(`SELECT COUNT(*) count FROM listing WHERE state = 'published' ${extra_where_clause}`, params)
 
     var listings_page = {
-        page_number: page_number,
-        page_size: page_size,
+        page_number: params.page_number,
+        page_size: params.page_size,
         total : total,
         listings : page_listings
-    
     }
 
     return listings_page
