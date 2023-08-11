@@ -51,7 +51,7 @@ app.use(function(req, res, next) {
 
 //Serve the WS Test page in the Root  
 app.get('/', function(req, res) {
-    fs.createReadStream('./index.html').pipe(res);
+    fs.createReadStream('./wstest.html').pipe(res);
 });
 
 //routes
